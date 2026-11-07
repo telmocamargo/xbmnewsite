@@ -1,0 +1,44 @@
+{
+  "name": "xboxmania",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "payload": "payload",
+    "generate:types": "payload generate:types",
+    "generate:importmap": "payload generate:importmap",
+    "migrate:wp": "tsx --env-file=.env scripts/migrate-wordpress.ts",
+    "ingest": "tsx --env-file=.env scripts/run-ingest.ts",
+    "seed": "tsx --env-file=.env scripts/seed.ts",
+    "seed:demo": "tsx --env-file=.env scripts/seed.ts --demo",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@payloadcms/db-postgres": "3.93.0",
+    "@payloadcms/next": "3.93.0",
+    "@payloadcms/richtext-lexical": "3.93.0",
+    "@payloadcms/ui": "3.93.0",
+    "graphql": "^16.8.1",
+    "next": "16.4.5",
+    "payload": "3.93.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "rss-parser": "^3.13.0",
+    "sanitize-html": "^2.18.1",
+    "sharp": "^0.34.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/sanitize-html": "^2.16.2",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
