@@ -69,10 +69,12 @@ export interface Config {
   collections: {
     posts: Post;
     reviews: Review;
+    pages: Page;
     games: Game;
     categories: Category;
     media: Media;
     candidates: Candidate;
+    messages: Message;
     sources: Source;
     users: User;
     'payload-kv': PayloadKv;
@@ -85,10 +87,12 @@ export interface Config {
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     games: GamesSelect<false> | GamesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     candidates: CandidatesSelect<false> | CandidatesSelect<true>;
+    messages: MessagesSelect<false> | MessagesSelect<true>;
     sources: SourcesSelect<false> | SourcesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -370,6 +374,38 @@ export interface Review {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Páginas fixas do site: Sobre, Contato, Política de privacidade e outras.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  /**
+   * Endereço da página: /slug
+   */
+  slug: string;
+  description?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Notícias encontradas automaticamente. Aprove para publicar, ou descarte.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -424,6 +460,25 @@ export interface Source {
   lastCheckedAt?: string | null;
   lastError?: string | null;
   failures?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Mensagens enviadas pelo formulário da página Contato. Apague as antigas (política: até 12 meses).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "messages".
+ */
+export interface Message {
+  id: number;
+  status?: ('new' | 'read' | 'answered') | null;
+  name: string;
+  email: string;
+  subject: 'pauta' | 'divulgacao' | 'parceria' | 'correcao' | 'privacidade' | 'outro';
+  subjectLabel?: string | null;
+  site?: string | null;
+  body: string;
+  consent?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -552,6 +607,10 @@ export interface PayloadLockedDocument {
         value: number | Review;
       } | null)
     | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
         relationTo: 'games';
         value: number | Game;
       } | null)
@@ -566,6 +625,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'candidates';
         value: number | Candidate;
+      } | null)
+    | ({
+        relationTo: 'messages';
+        value: number | Message;
       } | null)
     | ({
         relationTo: 'sources';
@@ -712,6 +775,18 @@ export interface ReviewsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "games_select".
  */
 export interface GamesSelect<T extends boolean = true> {
@@ -821,6 +896,22 @@ export interface CandidatesSelect<T extends boolean = true> {
   fetchedAt?: T;
   sourcePublishedAt?: T;
   telegramNotified?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "messages_select".
+ */
+export interface MessagesSelect<T extends boolean = true> {
+  status?: T;
+  name?: T;
+  email?: T;
+  subject?: T;
+  subjectLabel?: T;
+  site?: T;
+  body?: T;
+  consent?: T;
   updatedAt?: T;
   createdAt?: T;
 }

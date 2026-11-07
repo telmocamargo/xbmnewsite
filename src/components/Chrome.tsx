@@ -1,5 +1,8 @@
 import Link from 'next/link'
 import type { Game } from '../payload-types'
+import { CookiePrefsButton } from './CookieConsent'
+import { AdUnit } from './AdUnit'
+import { LINKS } from '../content/pages'
 
 const Ic = ({ n }: { n: string }) => (
   <svg className="ic" aria-hidden="true">
@@ -67,7 +70,7 @@ export function Header({ active = 'home' }: { active?: string }) {
             </div>
           ))}
           <div className="ni right" style={{ ['--c' as string]: '#ff5d73' }}>
-            <a href="https://www.padrim.com.br" rel="noopener" target="_blank">
+            <a href={LINKS.padrim} rel="noopener" target="_blank">
               <Ic n="heart" />
               <span>Colabore</span>
             </a>
@@ -112,13 +115,18 @@ export function Footer() {
         <span>© 2017–{new Date().getFullYear()} · Sinal verde para a sua mania</span>
         <nav aria-label="Rodapé">
           <Link href="/sobre">Sobre</Link>
+          <Link href="/contato">Contato</Link>
+          <Link href="/politica-de-privacidade">Política de privacidade</Link>
+          <CookiePrefsButton />
           <Link href="/feed.xml">RSS</Link>
-          <a href="https://discord.gg/" rel="noopener">Discord</a>
+          <a href={LINKS.discord} rel="noopener" target="_blank">Discord</a>
         </nav>
       </div>
     </footer>
   )
 }
+
+const SLOTS = { lb: process.env.NEXT_PUBLIC_ADSENSE_SLOT_LB, rect: process.env.NEXT_PUBLIC_ADSENSE_SLOT_RECT, inline: process.env.NEXT_PUBLIC_ADSENSE_SLOT_INLINE }
 
 export function AdSlot({ kind }: { kind: 'lb' | 'rect' | 'inline' }) {
   const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT
@@ -126,9 +134,7 @@ export function AdSlot({ kind }: { kind: 'lb' | 'rect' | 'inline' }) {
     if (process.env.NODE_ENV === 'production') return null
     return <div className={`ad ${kind}`}>ESPAÇO DE ANÚNCIO ({kind}) · ativa com NEXT_PUBLIC_ADSENSE_CLIENT</div>
   }
-  return (
-    <div className={`adwrap ${kind}`}>
-      <ins className="adsbygoogle" style={{ display: 'block' }} data-ad-client={client} data-ad-format="auto" data-full-width-responsive="true" />
-    </div>
-  )
+  const slot = SLOTS[kind]
+  // Sem o ID do bloco, o AdSense usa os anúncios automáticos e nada é reservado aqui.
+  return slot ? <AdUnit client={client} slot={slot} kind={kind} /> : null
 }

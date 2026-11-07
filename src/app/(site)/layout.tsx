@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
-import Script from 'next/script'
 import { SPRITE } from '../../components/sprite'
 import { ScrollFX } from '../../components/ScrollFX'
+import { CookieConsent } from '../../components/CookieConsent'
 import './site.css'
 
 const site = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
@@ -18,7 +18,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: '#0d0d0d', width: 'device-width', initialScale: 1 }
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
-  const ads = process.env.NEXT_PUBLIC_ADSENSE_CLIENT
   return (
     <html lang="pt-BR">
       <head>
@@ -36,7 +35,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         <div dangerouslySetInnerHTML={{ __html: SPRITE }} />
         <ScrollFX />
         {children}
-        {ads ? <Script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ads}`} crossOrigin="anonymous" strategy="afterInteractive" /> : null}
+        <CookieConsent />
       </body>
     </html>
   )

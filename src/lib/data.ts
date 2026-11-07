@@ -45,6 +45,12 @@ export async function findBySlug(slug: string) {
   return null
 }
 
+export async function findPage(slug: string) {
+  const payload = await getP()
+  const r = await payload.find({ collection: 'pages', where: { slug: { equals: slug } }, limit: 1, depth: 0 })
+  return r.docs[0] ?? null
+}
+
 export async function gamePassGames() {
   const payload = await getP()
   const now = new Date().toISOString()

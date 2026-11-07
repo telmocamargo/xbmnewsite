@@ -22,6 +22,9 @@ const nextConfig = {
       })),
       { source: '/category/:slug*', destination: '/noticias', permanent: true },
       { source: '/tag/:slug*', destination: '/noticias', permanent: true },
+      { source: '/sobre-o-xbox-mania', destination: '/sobre', permanent: true },
+      { source: '/a-equipe', destination: '/sobre', permanent: true },
+      { source: '/encontrou-um-problema', destination: '/contato', permanent: true },
       { source: '/feed', destination: '/feed.xml', permanent: true },
       { source: '/wp-sitemap.xml', destination: '/sitemap.xml', permanent: true },
     ]
