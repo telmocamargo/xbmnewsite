@@ -9,6 +9,10 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1 NODE_OPTIONS=--max-old-space-size=3072
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Variáveis públicas são gravadas no site durante o build
+ARG NEXT_PUBLIC_SITE_URL
+ARG NEXT_PUBLIC_ADSENSE_CLIENT
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL NEXT_PUBLIC_ADSENSE_CLIENT=$NEXT_PUBLIC_ADSENSE_CLIENT
 RUN npm run build
 
 FROM node:22-slim AS run
