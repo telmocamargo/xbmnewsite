@@ -7,6 +7,8 @@ import { randomBytes } from 'node:crypto'
 import { getPayload } from 'payload'
 import sharp from 'sharp'
 import config from '../src/payload.config'
+import { lexical } from '../src/lib/lexical'
+import { PAGE_SEEDS } from '../src/content/pages'
 
 const demo = process.argv.includes('--demo')
 const payload = await getPayload({ config })
@@ -31,6 +33,12 @@ const cats: [string, string][] = [
 for (const [name, slug] of cats) {
   const hit = await payload.find({ collection: 'categories', where: { slug: { equals: slug } }, limit: 1 })
   if (!hit.totalDocs) await payload.create({ collection: 'categories', data: { name, slug } })
+}
+
+// --- páginas fixas (só cria se ainda não existirem; depois são editadas no painel)
+for (const pg of PAGE_SEEDS) {
+  const hit = await payload.find({ collection: 'pages', where: { slug: { equals: pg.slug } }, limit: 1 })
+  if (!hit.totalDocs) await payload.create({ collection: 'pages', data: { title: pg.title, slug: pg.slug, description: pg.description, content: lexical(pg.blocks) } })
 }
 
 // --- fontes do pré-feed (confirme cada URL antes de ativar)

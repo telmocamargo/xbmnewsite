@@ -1,15 +1,19 @@
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 import { Header, Footer } from '../../../components/Chrome'
+import { PageView } from '../../../components/PageView'
 import { NewsItem, ReviewCard, Pager } from '../../../components/Cards'
-import { SECTIONS, isSection, latestPosts, latestReviews, findBySlug, postPath, reviewPath } from '../../../lib/data'
+import { SECTIONS, isSection, latestPosts, latestReviews, findBySlug, findPage, postPath, reviewPath } from '../../../lib/data'
 
 export const revalidate = 120
 type Props = { params: Promise<{ section: string }>; searchParams: Promise<{ page?: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { section } = await params
-  if (!isSection(section)) return {}
+  if (!isSection(section)) {
+    const pg = await findPage(section)
+    return pg ? { title: pg.title, description: pg.description || undefined, alternates: { canonical: `/${pg.slug}` } } : {}
+  }
   return { title: SECTIONS[section].label, description: SECTIONS[section].blurb, alternates: { canonical: `/${section}` } }
 }
 
@@ -19,6 +23,8 @@ export default async function SectionPage({ params, searchParams }: Props) {
 
   // URLs antigas do WordPress ficavam na raiz (/slug). Redireciona para o endereço novo.
   if (!isSection(section)) {
+    const pg = await findPage(section)
+    if (pg) return <PageView page={pg} />
     const hit = await findBySlug(section)
     if (!hit) notFound()
     permanentRedirect(hit.type === 'post' ? postPath(hit.doc) : reviewPath(hit.doc))

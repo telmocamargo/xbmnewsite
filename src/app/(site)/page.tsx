@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Header, Ticker, Footer, AdSlot } from '../../components/Chrome'
+import { LINKS } from '../../content/pages'
 import { Cover, NewsItem, ReviewCard } from '../../components/Cards'
 import { latestPosts, latestReviews, gamePassGames, postPath, reviewPath, fmtDate } from '../../lib/data'
 
@@ -96,7 +97,7 @@ export default async function Home() {
             <div className="card padrim">
               <h3>Apoie o Xboxmania</h3>
               <p>Ajude a manter o site independente e ganhe benefícios para apoiadores.</p>
-              <a className="btn" href="https://www.padrim.com.br" rel="noopener" target="_blank">
+              <a className="btn" href={LINKS.padrim} rel="noopener" target="_blank">
                 Conhecer no Padrim
               </a>
             </div>

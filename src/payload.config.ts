@@ -13,6 +13,8 @@ import { Posts } from './collections/Posts'
 import { Reviews } from './collections/Reviews'
 import { Sources } from './collections/Sources'
 import { Candidates } from './collections/Candidates'
+import { Pages } from './collections/Pages'
+import { Messages } from './collections/Messages'
 import { migrations } from './migrations'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -23,7 +25,7 @@ export default buildConfig({
     importMap: { baseDir: path.resolve(dirname) },
     meta: { titleSuffix: ' · Xboxmania', description: 'Painel do Xboxmania' },
   },
-  collections: [Posts, Reviews, Games, Categories, Media, Candidates, Sources, Users],
+  collections: [Posts, Reviews, Pages, Games, Categories, Media, Candidates, Messages, Sources, Users],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },

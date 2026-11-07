@@ -56,7 +56,9 @@ Regra de ouro: **o site atual (WordPress) só sai do ar no último passo**, quan
    | `TELEGRAM_WEBHOOK_SECRET` | segredo gerado |
    | `NOTIFY_MIN_RELEVANCE` | `80` |
    | `ANTHROPIC_API_KEY` | opcional |
-   | `NEXT_PUBLIC_ADSENSE_CLIENT` | deixe vazio até ter a conta do AdSense |
+   | `NEXT_PUBLIC_ADSENSE_CLIENT` | deixe vazio até ter a conta do AdSense (variável de **build**) |
+   | `NEXT_PUBLIC_ADSENSE_SLOT_LB`, `_RECT`, `_INLINE` | opcional, IDs dos blocos de anúncio; sem eles, o AdSense usa anúncios automáticos |
+   | `NEXT_PUBLIC_GA_ID` | opcional, ID do Google Analytics (`G-XXXXXXX`), variável de **build** |
 
 4. ☐ **Volume persistente:** monte um volume em `/app/media`. Sem isso, as imagens somem a cada novo deploy.
 5. ☐ Faça o primeiro deploy e espere terminar. As migrações do banco rodam sozinhas na inicialização.
@@ -66,7 +68,7 @@ Regra de ouro: **o site atual (WordPress) só sai do ar no último passo**, quan
 
 1. ☐ No terminal da aplicação (Coolify → aplicação → Terminal), rode:
    `SEED_ADMIN_EMAIL=seu@email.com SEED_ADMIN_PASSWORD='uma-senha-forte' npm run seed`
-   Isso cria o seu usuário, as categorias e as fontes do pré-feed.
+   Isso cria o seu usuário, as categorias, as fontes do pré-feed e as páginas **Sobre**, **Contato** e **Política de privacidade**.
 2. ☐ Entre em `/admin` e **troque a senha**.
 3. ☐ Crie os usuários da equipe (papel Editor ou Colaborador).
 
@@ -87,6 +89,8 @@ No mesmo terminal da aplicação:
 - ☐ `/sitemap.xml`, `/robots.txt` e `/feed.xml` respondem.
 - ☐ Uma URL antiga (por exemplo `/analise-drive-rally`) redireciona para a nova.
 - ☐ Criar, agendar e publicar um post de teste pelo painel funciona. Apague depois.
+- ☐ Enviar uma mensagem de teste pelo formulário de Contato e ver se ela aparece no painel. Apague depois.
+- ☐ O aviso de cookies aparece na primeira visita e some depois da escolha.
 - ☐ O site abre rápido (meta: carregar a home em poucos segundos mesmo no celular).
 - ☐ O backup do VPS e do banco está configurado (veja a seção K).
 
@@ -116,7 +120,8 @@ Faça em um horário de pouco acesso.
 - ☐ **Backups:** além do backup semanal do VPS, agende um backup diário do PostgreSQL pelo Coolify e guarde uma cópia fora do VPS. Inclua a pasta de mídia (`/app/media`).
 - ☐ **Manter a hospedagem antiga por cerca de 30 dias**, sem mexer, e só cancelar quando tudo estiver estável. Atenção: o preço promocional pode subir na renovação.
 - ☐ **AdSense:** pedir a aprovação quando o site já tiver conteúdo novo regular e uma página de política de privacidade. Depois, colocar o código em `NEXT_PUBLIC_ADSENSE_CLIENT` e fazer novo deploy.
-- ☐ **Páginas que ainda faltam:** Sobre, Contato e Política de privacidade.
+- ☐ **Revisar os textos das páginas** em Conteúdo → Páginas: Sobre (inclui a seção "Como trabalhamos", que deve refletir o que vocês realmente praticam) e Política de privacidade (confira prazo de guarda das mensagens e, se tiver CNPJ ou nome do responsável, inclua).
+- ☐ **Mensagens de contato:** chegam em Pré-feed → Mensagens de contato (e no Telegram, se configurado). Apague as com mais de 12 meses, como diz a política.
 - ☐ **Atualizações:** acompanhe as atualizações de segurança do Payload e do Next.js (o Dependabot do GitHub pode avisar).
 
 ## Se algo der errado

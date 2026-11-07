@@ -6,6 +6,7 @@ Site de notícias, análises e artigos sobre o ecossistema Xbox. Feito com **Pay
 
 - **Painel** em `/admin`: posts, análises (com nota, prós e contras), jogos, categorias, mídia, usuários e papéis. Rascunho, autosave, agendamento e histórico de versões.
 - **Site**: home, listas por seção, páginas de notícia, artigo e análise, SEO (dados estruturados, sitemap, RSS, robots), tema claro/escuro e menu com submenus.
+- **Páginas fixas** editáveis no painel (Sobre, Contato, Política de privacidade), formulário de contato que grava no painel e avisa no Telegram, e aviso de cookies. Estatísticas e anúncios só carregam depois do aceite.
 - **Pré-feed de notícias**: varredura de feeds RSS, filtro por relevância, agrupamento de duplicados, resumo curto em português, aviso no Telegram e aprovação com um toque.
 - **Migração do WordPress**: análises e artigos, com imagens baixadas e links reescritos. URLs antigas redirecionam para as novas.
 
@@ -72,5 +73,6 @@ scripts/           seed, migração do WordPress, varredura manual
 ## Pendências conhecidas
 
 - Imagens de notícias do pré-feed vêm da fonte e precisam de confirmação de licença antes de publicar.
-- Google Analytics, AdSense e Padrim ainda não estão configurados (o espaço dos anúncios já está reservado).
+- Google Analytics e AdSense são opcionais e ficam desligados até as variáveis `NEXT_PUBLIC_GA_ID` e `NEXT_PUBLIC_ADSENSE_CLIENT` serem definidas.
+- Os textos de Sobre e da Política de privacidade são uma base e precisam ser revisados pela equipe.
 - A imagem Docker e o deploy no Coolify ainda não foram testados.

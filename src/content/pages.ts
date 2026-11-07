@@ -1,0 +1,127 @@
+import type { Block } from '../lib/lexical'
+
+export const LINKS = {
+  discord: 'https://discord.gg/CgkkpPz',
+  instagram: 'https://www.instagram.com/xboxmaniabrasil/',
+  x: 'https://twitter.com/xboxmaniabrasil',
+  youtube: 'https://www.youtube.com/xboxmaniabrasil/',
+  facebook: 'https://www.facebook.com/XboxManiaBrasil/',
+  twitch: 'https://twitch.com/xboxmaniabrasil',
+  linkedin: 'https://www.linkedin.com/company/xboxmaniabrasil/',
+  padrim: 'https://www.padrim.com.br/xboxmaniabrasil',
+}
+
+type PageSeed = { slug: string; title: string; description: string; blocks: Block[] }
+
+/** Textos iniciais. Depois de criados, são editados pelo painel (Conteúdo → Páginas). */
+export const PAGE_SEEDS: PageSeed[] = [
+  {
+    slug: 'sobre',
+    title: 'Sobre o Xboxmania',
+    description: 'O Xboxmania é um site brasileiro feito por fãs do ecossistema Xbox, com notícias, análises, artigos e colunas desde 2017.',
+    blocks: [
+      ['p', 'O Xboxmania é um site brasileiro feito por fãs do ecossistema Xbox. Desde novembro de 2017 publicamos notícias, análises, artigos e colunas, sempre com o mesmo lema: sinal verde para a sua mania.'],
+      ['h2', 'Como tudo começou'],
+      ['p', 'Nossa história começou no fórum da UOL, quando Daniel Bononi, o “Don”, resolveu criar um torneio de FIFA 11. Acabado o campeonato, uns foram embora e algumas amizades ficaram e permanecem até hoje.'],
+      ['p', 'Atravessamos juntos a geração PS3 e Xbox 360 e, na hora de escolher o próximo console, o grupo se dividiu. Aos poucos, o Xbox One foi ganhando a turma: a dash ágil, os jogos da Gold, o EA Access e um leque maior de possibilidades. Como não amar?'],
+      ['p', 'E foi o amor que nos levou ao passo seguinte. Amor sem compartilhar é incompleto, e a vontade de dividir o dia a dia e as experiências com o Xbox virou este projeto. Do site também nasceu o **Gamemania Podcast**, que passou de 150 episódios e cujo acervo continua disponível aqui.'],
+      ['h2', 'O que você encontra aqui'],
+      ['ul', [
+        '**Notícias** sobre Xbox, Game Pass, lançamentos e eventos.',
+        '**Análises** de jogos, com nota, pontos positivos e negativos.',
+        '**Artigos e colunas** com opinião e memórias de quem joga.',
+        '**Caixa Indie**, com destaque para jogos independentes, inclusive brasileiros.',
+        '**Podcast** com o acervo do Gamemania.',
+      ]],
+      ['h2', 'Como trabalhamos'],
+      ['ul', [
+        'As análises são feitas jogando. Informamos sempre se a cópia foi cedida pela desenvolvedora, comprada por nós ou veio do Game Pass.',
+        'Anúncios e apoio de leitores não influenciam notas nem opiniões.',
+        'Notícias de outras fontes levam crédito e link para o texto original, e rumores são identificados como tal.',
+        'Erros acontecem. Se encontrar um, avise pela [página de contato](/contato) e corrigiremos.',
+      ]],
+      ['h2', 'Apoie o Xboxmania'],
+      ['p', `O site é feito com pouco tempo e muito carinho. Se quiser ajudar a mantê-lo no ar, conheça o [Xboxmania no Padrim](${LINKS.padrim}). Para falar com a gente, use a [página de contato](/contato).`],
+    ],
+  },
+  {
+    slug: 'contato',
+    title: 'Contato',
+    description: 'Fale com a equipe do Xboxmania: sugestões de pauta, parcerias, cópias para análise e correções.',
+    blocks: [
+      ['p', 'Quer sugerir uma pauta, divulgar um jogo, propor uma parceria ou avisar sobre um erro? Envie sua mensagem pelo formulário abaixo e responderemos pelo e-mail que você informar.'],
+      ['p', 'Para enviar uma **cópia de jogo para análise**, escolha o assunto “Divulgação ou cópia para análise” e inclua a plataforma, a data de lançamento e, se houver, o link do press kit.'],
+      ['h2', 'Outros canais'],
+      ['ul', [
+        `[Discord](${LINKS.discord}), para conversar com a comunidade`,
+        `[Instagram](${LINKS.instagram})`,
+        `[X (Twitter)](${LINKS.x})`,
+        `[YouTube](${LINKS.youtube})`,
+        `[Facebook](${LINKS.facebook})`,
+        `[Twitch](${LINKS.twitch})`,
+        `[LinkedIn](${LINKS.linkedin})`,
+      ]],
+    ],
+  },
+  {
+    slug: 'politica-de-privacidade',
+    title: 'Política de privacidade',
+    description: 'Como o Xboxmania trata dados pessoais, cookies e publicidade, de acordo com a Lei Geral de Proteção de Dados (LGPD).',
+    blocks: [
+      ['p', 'Esta política explica quais dados o Xboxmania (https://xboxmania.com.br) coleta, para que usa, com quem compartilha e quais são os seus direitos, em linha com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018, a LGPD).'],
+      ['h2', 'Quem somos'],
+      ['p', 'O Xboxmania é um site de conteúdo sobre jogos e videogames operado pela equipe Xboxmania. Para qualquer assunto de privacidade, fale conosco pela [página de contato](/contato), escolhendo o assunto “Privacidade”.'],
+      ['h2', 'Quais dados coletamos'],
+      ['ul', [
+        '**Dados de navegação:** endereço IP, tipo de navegador e dispositivo, páginas visitadas e horário de acesso. São registrados automaticamente pelo servidor do site e, se você permitir, por ferramentas de estatística.',
+        '**Mensagens enviadas pelo formulário de contato:** nome, e-mail, assunto, mensagem e, se você quiser informar, o endereço do seu site ou canal.',
+        '**Preferência de cookies:** a escolha que você faz no aviso de cookies.',
+      ]],
+      ['p', 'O site não tem cadastro de leitores nem comentários, e por isso não coleta senhas, documentos ou dados de pagamento. Os apoios feitos pelo Padrim são tratados pelo próprio Padrim, sob a política dele.'],
+      ['h2', 'Para que usamos os dados'],
+      ['ul', [
+        '**Responder suas mensagens.** Base legal: seu consentimento ao enviar o formulário e a necessidade de atender ao seu pedido.',
+        '**Manter o site seguro e funcionando**, evitando spam e abusos. Base legal: legítimo interesse.',
+        '**Entender como o site é usado** e melhorá-lo, por meio de estatísticas de acesso. Base legal: seu consentimento.',
+        '**Exibir publicidade**, que ajuda a manter o site. Base legal: seu consentimento.',
+      ]],
+      ['h2', 'Cookies'],
+      ['p', 'Cookies são pequenos arquivos guardados no seu navegador. Usamos três tipos:'],
+      ['ul', [
+        '**Necessários:** guardam a sua escolha sobre cookies. Não podem ser desativados.',
+        '**Estatísticos:** medem o uso do site, por exemplo com o Google Analytics, e só são ativados se você aceitar.',
+        '**Publicidade:** usados pelo Google AdSense e parceiros para exibir anúncios, e só são ativados se você aceitar.',
+      ]],
+      ['p', 'Você pode mudar sua escolha a qualquer momento em “Preferências de cookies”, no rodapé do site. Também é possível bloquear ou apagar cookies nas configurações do navegador, mas algumas partes do site podem funcionar de forma diferente.'],
+      ['h2', 'Publicidade e Google'],
+      ['p', 'Podemos exibir anúncios do Google AdSense. O Google e seus parceiros podem usar cookies para mostrar anúncios com base em visitas anteriores a este e a outros sites. Você pode gerenciar a personalização de anúncios em [adssettings.google.com](https://adssettings.google.com) e saber mais sobre como o Google usa informações de sites parceiros em [policies.google.com/technologies/partner-sites](https://policies.google.com/technologies/partner-sites).'],
+      ['h2', 'Conteúdo de terceiros'],
+      ['p', 'Alguns textos incorporam vídeos e outros conteúdos de terceiros, como o YouTube. Esses serviços podem coletar dados sobre você quando o conteúdo é carregado, de acordo com as próprias políticas de privacidade deles.'],
+      ['h2', 'Com quem compartilhamos'],
+      ['p', 'Não vendemos seus dados. Eles podem ser tratados por empresas que nos ajudam a operar o site, como provedores de hospedagem, de armazenamento, de notificações internas, de estatísticas e de publicidade. Cada uma só pode usar os dados para prestar o serviço contratado ou conforme a sua própria política, no caso do Google. Alguns desses serviços podem processar dados fora do Brasil.'],
+      ['h2', 'Por quanto tempo guardamos'],
+      ['ul', [
+        'Mensagens do formulário: pelo tempo necessário para responder e, depois disso, por até 12 meses, quando são apagadas.',
+        'Registros de acesso do servidor: pelo período definido pelo provedor de hospedagem.',
+        'Estatísticas e dados de publicidade: conforme as políticas do Google.',
+      ]],
+      ['h2', 'Seus direitos'],
+      ['p', 'Pela LGPD, você pode pedir a qualquer momento:'],
+      ['ul', [
+        'confirmação de que tratamos seus dados e acesso a eles;',
+        'correção de dados incompletos ou desatualizados;',
+        'anonimização, bloqueio ou eliminação de dados desnecessários ou tratados fora da lei;',
+        'eliminação dos dados tratados com o seu consentimento;',
+        'informação sobre com quem compartilhamos seus dados;',
+        'revogação do consentimento, sem prejuízo do que foi feito antes dele.',
+      ]],
+      ['p', 'Para exercer qualquer desses direitos, use a [página de contato](/contato). Você também pode reclamar à Autoridade Nacional de Proteção de Dados (ANPD).'],
+      ['h2', 'Segurança'],
+      ['p', 'Usamos conexão segura (HTTPS), acesso restrito ao painel de edição e backups. Nenhum sistema é totalmente imune, e por isso nos comprometemos a agir rapidamente se houver qualquer incidente.'],
+      ['h2', 'Crianças e adolescentes'],
+      ['p', 'O site não é direcionado a crianças, e não coletamos intencionalmente dados de menores de 12 anos. Se você é responsável por uma criança e acha que ela nos enviou dados, fale conosco para que possamos apagá-los.'],
+      ['h2', 'Mudanças nesta política'],
+      ['p', 'Podemos atualizar esta política. A data da última atualização aparece no fim desta página, e mudanças importantes serão destacadas no site.'],
+    ],
+  },
+]
