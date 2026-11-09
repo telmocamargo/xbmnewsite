@@ -29,9 +29,11 @@ export function Header({ active = 'home' }: { active?: string }) {
             <img src="/brand/logo-h-dark.svg" alt="Xboxmania" width={162} height={34} />
           </Link>
           <div className="head-actions">
-            <Link className="search" href="/analises" aria-label="Buscar">
-              <Ic n="search" /> <span>Buscar jogos, notícias…</span>
-            </Link>
+            <form className="search" action="/busca" method="get" role="search">
+              <Ic n="search" />
+              <input id="busca-input" type="search" name="q" placeholder="Buscar jogos, notícias…" aria-label="Buscar no site" autoComplete="off" maxLength={80} />
+              <kbd aria-hidden="true">/</kbd>
+            </form>
             <Link className="btn ghost" href="/feed.xml">
               <Ic n="mail" />
               RSS

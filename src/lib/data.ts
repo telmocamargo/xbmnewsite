@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import config from '../payload.config'
 import type { Media, Post, Review, Game } from '../payload-types'
+import { normalize } from './search'
 
 export const getP = () => getPayload({ config })
 export const SITE = () => (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
@@ -18,7 +19,7 @@ export const postPath = (p: Pick<Post, 'slug' | 'kind'>) =>
   `/${p.kind === 'noticia' ? 'noticias' : p.kind === 'podcast' ? 'podcast' : 'artigos'}/${p.slug}`
 export const reviewPath = (r: Pick<Review, 'slug'>) => `/analises/${r.slug}`
 
-const live = () => ({ and: [{ _status: { equals: 'published' } }, { or: [{ publishedAt: { less_than_equal: new Date().toISOString() } }, { publishedAt: { exists: false } }] }] })
+export const live = () => ({ and: [{ _status: { equals: 'published' } }, { or: [{ publishedAt: { less_than_equal: new Date().toISOString() } }, { publishedAt: { exists: false } }] }] })
 
 export async function latestPosts(opts: { limit?: number; page?: number; kinds?: string[]; exceptIds?: number[] } = {}) {
   const payload = await getP()
@@ -31,6 +32,18 @@ export async function latestPosts(opts: { limit?: number; page?: number; kinds?:
 export async function latestReviews(opts: { limit?: number; page?: number } = {}) {
   const payload = await getP()
   return payload.find({ collection: 'reviews', where: live() as any, sort: '-publishedAt', limit: opts.limit ?? 8, page: opts.page ?? 1, depth: 1 })
+}
+
+export async function searchContent(raw: string) {
+  const terms = normalize(raw).split(' ').filter((t) => t.length >= 2).slice(0, 6)
+  if (!terms.length) return { terms, reviews: [] as Review[], posts: [] as Post[] }
+  const payload = await getP()
+  const where = { and: [live(), ...terms.map((t) => ({ searchText: { contains: t } }))] } as any
+  const [reviews, posts] = await Promise.all([
+    payload.find({ collection: 'reviews', where, sort: '-publishedAt', limit: 24, depth: 1 }),
+    payload.find({ collection: 'posts', where, sort: '-publishedAt', limit: 24, depth: 1 }),
+  ])
+  return { terms, reviews: reviews.docs, posts: posts.docs }
 }
 
 export async function findBySlug(slug: string) {

@@ -13,11 +13,12 @@
     "payload": "payload",
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
-    "migrate:wp": "tsx --env-file=.env scripts/migrate-wordpress.ts",
-    "ingest": "tsx --env-file=.env scripts/run-ingest.ts",
-    "seed": "tsx --env-file=.env scripts/seed.ts",
-    "seed:demo": "tsx --env-file=.env scripts/seed.ts --demo",
-    "typecheck": "tsc --noEmit"
+    "migrate:wp": "tsx --env-file-if-exists=.env scripts/migrate-wordpress.ts",
+    "ingest": "tsx --env-file-if-exists=.env scripts/run-ingest.ts",
+    "seed": "tsx --env-file-if-exists=.env scripts/seed.ts",
+    "seed:demo": "tsx --env-file-if-exists=.env scripts/seed.ts --demo",
+    "typecheck": "tsc --noEmit",
+    "reindex": "tsx --env-file-if-exists=.env scripts/reindex-search.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.93.0",
