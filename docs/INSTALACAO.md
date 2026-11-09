@@ -80,7 +80,8 @@ No mesmo terminal da aplicação:
 2. ☐ `npm run migrate:wp -- --run --limit 3` migra 3 itens de cada grupo, como teste. Abra o site e confira.
 3. ☐ `npm run migrate:wp -- --run --all` migra tudo (análises, artigos, colunas e Caixa Indie). Pode levar um bom tempo por causa das imagens. O script pode ser repetido sem duplicar.
 4. ☐ (Opcional) `npm run migrate:wp -- --run --all --podcast` inclui o acervo do podcast.
-5. ☐ **Preencher as notas das análises** no painel (elas chegam sem nota).
+5. ☐ **Recalcular a busca** depois de migrar: `npm run reindex`. Sem isso, os itens migrados não aparecem nos resultados da busca.
+6. ☐ **Preencher as notas das análises** no painel (elas chegam sem nota).
 
 ## H. Conferir antes da virada
 

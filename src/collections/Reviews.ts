@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { slugFromTitle } from '../lib/slug'
+import { buildSearchText } from '../lib/search'
 
 const publishedOnly = ({ req }: { req: { user?: unknown } }) =>
   req.user ? true : { _status: { equals: 'published' as const } }
@@ -70,12 +71,14 @@ export const Reviews: CollectionConfig = {
         { name: 'metaDescription', label: 'Descrição para buscadores', type: 'textarea', maxLength: 170 },
       ],
     },
+    { name: 'searchText', label: 'Texto de busca', type: 'textarea', admin: { hidden: true }, access: { read: ({ req }) => !!req.user } },
     { name: 'wpId', label: 'ID no WordPress', type: 'number', index: true, admin: { position: 'sidebar', readOnly: true, condition: (d) => !!d?.wpId } },
   ],
   hooks: {
     beforeChange: [
-      ({ data }) => {
+      ({ data, originalDoc }) => {
         if (data._status === 'published' && !data.publishedAt) data.publishedAt = new Date().toISOString()
+        data.searchText = buildSearchText({ ...originalDoc, ...data })
         return data
       },
     ],

@@ -417,3 +417,10 @@ table.q tr:last-child td{border-bottom:0}
 .consent .btn{background:var(--lime);color:#0d0d0d}
 .consent .btn.ghost{background:transparent;color:var(--head-fg);border-color:#3a3f3c}
 @media (max-width:700px){.cf-row{grid-template-columns:1fr}.consent-actions{width:100%}.consent-actions .btn{flex:1;justify-content:center}}
+
+/* ===== Busca ===== */
+.search input{background:none;border:0;outline:0;color:inherit;font:inherit;width:210px;min-width:0;padding:0}
+.search input::placeholder{color:#a3aaa6}
+.search input::-webkit-search-cancel-button{display:none}
+.search:focus-within{border-color:var(--lime);background:#161816}
+@media (max-width:700px){.brand{flex-wrap:wrap;gap:10px;padding-block:12px}.head-actions{margin-left:0;width:100%}.search{flex:1}.search input{width:100%;flex:1}}

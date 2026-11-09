@@ -193,6 +193,7 @@ export interface Post {
     metaTitle?: string | null;
     metaDescription?: string | null;
   };
+  searchText?: string | null;
   wpId?: number | null;
   updatedAt: string;
   createdAt: string;
@@ -368,6 +369,7 @@ export interface Review {
     metaTitle?: string | null;
     metaDescription?: string | null;
   };
+  searchText?: string | null;
   wpId?: number | null;
   updatedAt: string;
   createdAt: string;
@@ -718,6 +720,7 @@ export interface PostsSelect<T extends boolean = true> {
         metaTitle?: T;
         metaDescription?: T;
       };
+  searchText?: T;
   wpId?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -768,6 +771,7 @@ export interface ReviewsSelect<T extends boolean = true> {
         metaTitle?: T;
         metaDescription?: T;
       };
+  searchText?: T;
   wpId?: T;
   updatedAt?: T;
   createdAt?: T;
