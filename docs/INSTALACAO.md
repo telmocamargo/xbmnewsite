@@ -58,6 +58,7 @@ Regra de ouro: **o site atual (WordPress) só sai do ar no último passo**, quan
    | `ANTHROPIC_API_KEY` | opcional |
    | `NEXT_PUBLIC_ADSENSE_CLIENT` | deixe vazio até ter a conta do AdSense (variável de **build**) |
    | `NEXT_PUBLIC_ADSENSE_SLOT_LB`, `_RECT`, `_INLINE` | opcional, IDs dos blocos de anúncio; sem eles, o AdSense usa anúncios automáticos |
+   | `YOUTUBE_API_KEY` | só para importar o podcast (passo G2); pode ser removida depois |
    | `NEXT_PUBLIC_GA_ID` | opcional, ID do Google Analytics (`G-XXXXXXX`), variável de **build** |
 
 4. ☐ **Volume persistente:** monte um volume em `/app/media`. Sem isso, as imagens somem a cada novo deploy.
@@ -82,6 +83,18 @@ No mesmo terminal da aplicação:
 4. ☐ (Opcional) `npm run migrate:wp -- --run --all --podcast` inclui o acervo do podcast.
 5. ☐ **Recalcular a busca** depois de migrar: `npm run reindex`. Sem isso, os itens migrados não aparecem nos resultados da busca.
 6. ☐ **Preencher as notas das análises** no painel (elas chegam sem nota).
+
+## G2. Importar o podcast do YouTube
+
+1. ☐ **Criar a chave da API do YouTube** (gratuita): no Google Cloud Console, crie um projeto, ative a **YouTube Data API v3** e crie uma **chave de API**. Restrinja a chave a essa API (e, se quiser, ao IP do servidor). Guarde a chave com cuidado.
+2. ☐ No Coolify, adicione a variável `YOUTUBE_API_KEY` com essa chave e faça um deploy (ou use `export YOUTUBE_API_KEY=...` só na sessão do terminal).
+3. ☐ **Consultar** o que será importado (nada é gravado): `npx tsx scripts/import-youtube.ts`
+4. ☐ **Teste pequeno:** `npx tsx scripts/import-youtube.ts --run --limit 5`
+5. ☐ **Importar tudo:** `npx tsx scripts/import-youtube.ts --run` (pode ser repetido, pula o que já existe)
+6. ☐ **Ligar os endereços antigos do podcast** aos novos episódios: `npx tsx scripts/link-podcast-redirects.ts` (consulta) e depois com `--run`. Rode **antes** da virada do domínio, porque ele lê o site antigo.
+7. ☐ No painel, em **Podcast e vídeos**, marque **Destaque na home** em dois episódios.
+
+Vídeos de até 60 s (Shorts) são ignorados. Episódios com 20 minutos ou mais entram como **Podcast**, e os mais curtos como **Vídeo**. O tipo pode ser ajustado episódio a episódio no painel.
 
 ## H. Conferir antes da virada
 

@@ -1,6 +1,6 @@
 import { getPayload } from 'payload'
 import config from '../payload.config'
-import type { Media, Post, Review, Game } from '../payload-types'
+import type { Media, Post, Review, Game, Episode } from '../payload-types'
 import { normalize } from './search'
 
 export const getP = () => getPayload({ config })
@@ -18,6 +18,14 @@ export const isSection = (s: string): s is SectionKey => s in SECTIONS
 export const postPath = (p: Pick<Post, 'slug' | 'kind'>) =>
   `/${p.kind === 'noticia' ? 'noticias' : p.kind === 'podcast' ? 'podcast' : 'artigos'}/${p.slug}`
 export const reviewPath = (r: Pick<Review, 'slug'>) => `/analises/${r.slug}`
+export const episodePath = (e: Pick<Episode, 'slug'>) => `/podcast/${e.slug}`
+export const CHANNEL_URL = 'https://www.youtube.com/@gamemaniapodcast'
+
+export function fmtDuration(sec?: number | null) {
+  if (!sec) return ''
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60
+  return h ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` : `${m}:${String(s).padStart(2, '0')}`
+}
 
 export const live = () => ({ and: [{ _status: { equals: 'published' } }, { or: [{ publishedAt: { less_than_equal: new Date().toISOString() } }, { publishedAt: { exists: false } }] }] })
 
@@ -36,14 +44,38 @@ export async function latestReviews(opts: { limit?: number; page?: number } = {}
 
 export async function searchContent(raw: string) {
   const terms = normalize(raw).split(' ').filter((t) => t.length >= 2).slice(0, 6)
-  if (!terms.length) return { terms, reviews: [] as Review[], posts: [] as Post[] }
+  if (!terms.length) return { terms, reviews: [] as Review[], posts: [] as Post[], episodes: [] as Episode[] }
   const payload = await getP()
   const where = { and: [live(), ...terms.map((t) => ({ searchText: { contains: t } }))] } as any
-  const [reviews, posts] = await Promise.all([
+  const epWhere = { and: terms.map((t) => ({ searchText: { contains: t } })) } as any
+  const [reviews, posts, episodes] = await Promise.all([
     payload.find({ collection: 'reviews', where, sort: '-publishedAt', limit: 24, depth: 1 }),
     payload.find({ collection: 'posts', where, sort: '-publishedAt', limit: 24, depth: 1 }),
+    payload.find({ collection: 'episodes', where: epWhere, sort: '-publishedAt', limit: 24, depth: 1 }),
   ])
-  return { terms, reviews: reviews.docs, posts: posts.docs }
+  return { terms, reviews: reviews.docs, posts: posts.docs, episodes: episodes.docs }
+}
+
+export async function latestEpisodes(opts: { limit?: number; page?: number; kind?: 'podcast' | 'video'; featured?: boolean; exceptIds?: number[] } = {}) {
+  const payload = await getP()
+  const and: any[] = []
+  if (opts.kind) and.push({ kind: { equals: opts.kind } })
+  if (opts.featured) and.push({ featured: { equals: true } })
+  if (opts.exceptIds?.length) and.push({ id: { not_in: opts.exceptIds } })
+  return payload.find({ collection: 'episodes', where: and.length ? { and } : {}, sort: '-publishedAt', limit: opts.limit ?? 12, page: opts.page ?? 1, depth: 1 })
+}
+
+export async function findEpisode(slug: string) {
+  const payload = await getP()
+  const r = await payload.find({ collection: 'episodes', where: { slug: { equals: slug } }, limit: 1, depth: 1 })
+  return r.docs[0] ?? null
+}
+
+/** Episódio que tinha este endereço no site antigo (para redirecionar). */
+export async function findEpisodeByLegacy(slug: string) {
+  const payload = await getP()
+  const r = await payload.find({ collection: 'episodes', where: { 'legacySlugs.slug': { equals: slug } }, limit: 1, depth: 0 })
+  return r.docs[0] ?? null
 }
 
 export async function findBySlug(slug: string) {

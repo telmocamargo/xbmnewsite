@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Header, Ticker, Footer, AdSlot } from '../../components/Chrome'
 import { LINKS } from '../../content/pages'
+import { PodcastBlock } from '../../components/PodcastBlock'
 import { Cover, NewsItem, ReviewCard } from '../../components/Cards'
 import { latestPosts, latestReviews, gamePassGames, postPath, reviewPath, fmtDate } from '../../lib/data'
 
@@ -120,6 +121,7 @@ export default async function Home() {
           </>
         ) : null}
       </main>
+      <PodcastBlock />
       <Footer />
     </>
   )

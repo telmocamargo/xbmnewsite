@@ -3,7 +3,7 @@ import { toSlug } from './slug'
 
 const MAX_IMAGE = 8 * 1024 * 1024
 
-export async function downloadMedia(payload: Payload, url: string, alt: string, credit: string, origin: 'source' | 'legacy' | 'press' = 'source', req?: PayloadRequest) {
+export async function downloadMedia(payload: Payload, url: string, alt: string, credit: string, origin: 'source' | 'legacy' | 'press' | 'own' = 'source', req?: PayloadRequest) {
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(20000), headers: { 'user-agent': 'XboxmaniaBot/1.0' } })
     const mimetype = (res.headers.get('content-type') || '').split(';')[0]

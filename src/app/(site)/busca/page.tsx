@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Header, Footer } from '../../../components/Chrome'
-import { NewsItem, ReviewCard } from '../../../components/Cards'
+import { NewsItem, ReviewCard, EpisodeCard } from '../../../components/Cards'
 import { searchContent, postPath, reviewPath } from '../../../lib/data'
 
 export const dynamic = 'force-dynamic'
@@ -10,8 +10,8 @@ type Props = { searchParams: Promise<{ q?: string }> }
 
 export default async function Busca({ searchParams }: Props) {
   const q = ((await searchParams).q || '').slice(0, 80).trim()
-  const { terms, reviews, posts } = await searchContent(q)
-  const total = reviews.length + posts.length
+  const { terms, reviews, posts, episodes } = await searchContent(q)
+  const total = reviews.length + posts.length + episodes.length
 
   return (
     <>
@@ -47,6 +47,18 @@ export default async function Busca({ searchParams }: Props) {
             {posts.map((p) => (
               <NewsItem key={p.id} href={postPath(p)} title={p.title} tag={p.kind === 'noticia' ? 'Notícia' : p.kind === 'podcast' ? 'Podcast' : 'Artigo'} excerpt={p.excerpt} date={p.publishedAt} media={p.heroImage} />
             ))}
+          </>
+        ) : null}
+        {episodes.length ? (
+          <>
+            <div className="sec-title" style={{ marginTop: 30 }}>
+              <h2>Podcast e vídeos</h2>
+            </div>
+            <div className="eps">
+              {episodes.map((e) => (
+                <EpisodeCard key={e.id} ep={e} />
+              ))}
+            </div>
           </>
         ) : null}
         {reviews.length >= 24 || posts.length >= 24 ? <p className="meta" style={{ marginTop: 14 }}>Mostrando os 24 mais recentes de cada grupo. Refine a busca para ver outros.</p> : null}
