@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound, permanentRedirect } from 'next/navigation'
-import { Header, Footer, AdSlot } from '../../../../components/Chrome'
+import { Header, Footer, AdSlot, hasAd } from '../../../../components/Chrome'
 import { Cover, NewsItem } from '../../../../components/Cards'
 import { Body } from '../../../../components/Body'
 import { SECTIONS, SITE, isSection, findBySlug, latestPosts, postPath, reviewPath, mediaUrl, fmtDate, fmtScore, scoreLabel, authorOf } from '../../../../lib/data'
@@ -65,6 +65,8 @@ export default async function Detail({ params }: Props) {
   const s = d.subscores || {}
   const bars: [string, number | null | undefined][] = [['Jogabilidade', s.gameplay], ['Visual', s.visual], ['Som', s.sound], ['Desempenho', s.performance]]
 
+  const showSide = hit.type === 'review' || hasAd('rect')
+
   return (
     <>
       <Header active={section} />
@@ -74,13 +76,13 @@ export default async function Detail({ params }: Props) {
           <Link href="/">Início</Link> / <Link href={`/${section}`}>{SECTIONS[section].label}</Link> / {d.title}
         </div>
 
-        <div className={hit.type === 'review' ? 'a-head' : undefined} style={hit.type === 'review' ? undefined : { paddingTop: 10 }}>
-          <div>
+        <div className={`detail${showSide ? '' : ' solo'}`}>
+          <header className="d-head">
             <div className="tag">
               {hit.type === 'review' ? `Análise${d.platformTested ? ' · ' + d.platformTested : ''}` : SECTIONS[section].label}
               {d.source?.rumor ? ' · rumor' : ''}
             </div>
-            <h1 style={{ fontSize: 'clamp(34px,6vw,54px)', fontWeight: 800, margin: '6px 0 10px' }}>{d.title}</h1>
+            <h1>{d.title}</h1>
             {(d.dek || (hit.type === 'post' && d.excerpt && !d.source?.url)) ? <p className="dek">{d.dek || d.excerpt}</p> : null}
             <div className="by">
               <div className="av">{author[0]}</div>
@@ -88,24 +90,15 @@ export default async function Detail({ params }: Props) {
                 Por <b style={{ color: 'var(--fg)' }}>{author}</b> · {fmtDate(d.publishedAt)}
               </div>
             </div>
-          </div>
-          {hit.type === 'review' && d.score != null ? (
-            <div className="verdict">
-              <div className="n">
-                {fmtScore(d.score)}
-                <small>/10</small>
+            {hit.type === 'review' && d.score != null ? (
+              <div className="score-inline">
+                <b>{fmtScore(d.score)}</b>
+                <span>/10 · {scoreLabel(d.score)}</span>
               </div>
-              <b style={{ fontFamily: 'var(--f-display)', fontSize: 20 }}>{scoreLabel(d.score)}</b>
-              <ul>
-                {(d.pros || []).map((x: any) => <li key={x.id}>{x.text}</li>)}
-                {(d.cons || []).map((x: any) => <li className="c" key={x.id}>{x.text}</li>)}
-              </ul>
-            </div>
-          ) : null}
-        </div>
+            ) : null}
+          </header>
 
-        <div className="article" style={{ gridTemplateColumns: 'minmax(0,1fr) 300px' }}>
-          <article className="prose">
+          <article className="prose d-article">
             {img ? <Cover media={d.heroImage} title={d.title} size="hero" eager /> : null}
             {hit.type === 'post' && d.source?.url ? (
               <>
@@ -120,34 +113,50 @@ export default async function Detail({ params }: Props) {
             <Body content={d.content} legacyHtml={d.legacyHtml} />
             <AdSlot kind="inline" />
           </article>
-          <aside className="side">
-            {hit.type === 'review' ? (
-              <>
-                <div className="card">
-                  <h3>Ficha técnica</h3>
-                  <table className="spec">
-                    <tbody>
-                      {typeof d.game === 'object' && d.game?.developer ? <tr><td>Desenvolvedora</td><td>{d.game.developer}</td></tr> : null}
-                      {d.platformTested ? <tr><td>Plataforma testada</td><td>{d.platformTested}</td></tr> : null}
-                      {d.playTime ? <tr><td>Tempo de jogo</td><td>{d.playTime}</td></tr> : null}
-                      <tr><td>Cópia</td><td>{d.copy === 'bought' ? 'Comprada pelo Xboxmania' : d.copy === 'gamepass' ? 'Game Pass' : 'Cedida pela desenvolvedora'}</td></tr>
-                    </tbody>
-                  </table>
-                </div>
-                {bars.some(([, v]) => v != null) ? (
-                  <div className="card">
-                    <h3>Notas por categoria</h3>
-                    <div className="bars">
-                      {bars.filter(([, v]) => v != null).map(([k, v]) => (
-                        <div key={k}>{k}<i style={{ ['--v' as string]: `${(v as number) * 10}%` }} /><b>{fmtScore(v as number)}</b></div>
-                      ))}
+
+          {showSide ? (
+            <aside className="d-side">
+              {hit.type === 'review' ? (
+                <>
+                  {d.score != null ? (
+                    <div className="verdict">
+                      <div className="n">
+                        {fmtScore(d.score)}
+                        <small>/10</small>
+                      </div>
+                      <b style={{ fontFamily: 'var(--f-display)', fontSize: 20 }}>{scoreLabel(d.score)}</b>
+                      <ul>
+                        {(d.pros || []).map((x: any) => <li key={x.id}>{x.text}</li>)}
+                        {(d.cons || []).map((x: any) => <li className="c" key={x.id}>{x.text}</li>)}
+                      </ul>
                     </div>
+                  ) : null}
+                  <div className="card">
+                    <h3>Ficha técnica</h3>
+                    <table className="spec">
+                      <tbody>
+                        {typeof d.game === 'object' && d.game?.developer ? <tr><td>Desenvolvedora</td><td>{d.game.developer}</td></tr> : null}
+                        {d.platformTested ? <tr><td>Plataforma testada</td><td>{d.platformTested}</td></tr> : null}
+                        {d.playTime ? <tr><td>Tempo de jogo</td><td>{d.playTime}</td></tr> : null}
+                        <tr><td>Cópia</td><td>{d.copy === 'bought' ? 'Comprada pelo Xboxmania' : d.copy === 'gamepass' ? 'Game Pass' : 'Cedida pela desenvolvedora'}</td></tr>
+                      </tbody>
+                    </table>
                   </div>
-                ) : null}
-              </>
-            ) : null}
-            <AdSlot kind="rect" />
-          </aside>
+                  {bars.some(([, v]) => v != null) ? (
+                    <div className="card">
+                      <h3>Notas por categoria</h3>
+                      <div className="bars">
+                        {bars.filter(([, v]) => v != null).map(([k, v]) => (
+                          <div key={k}>{k}<i style={{ ['--v' as string]: `${(v as number) * 10}%` }} /><b>{fmtScore(v as number)}</b></div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                </>
+              ) : null}
+              <AdSlot kind="rect" />
+            </aside>
+          ) : null}
         </div>
 
         {related.length ? (
