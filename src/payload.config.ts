@@ -1,7 +1,7 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { BlocksFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 
@@ -16,6 +16,7 @@ import { Candidates } from './collections/Candidates'
 import { Pages } from './collections/Pages'
 import { Messages } from './collections/Messages'
 import { migrations } from './migrations'
+import { YouTubeBlock } from './blocks/YouTube'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -26,7 +27,9 @@ export default buildConfig({
     meta: { titleSuffix: ' · Xboxmania', description: 'Painel do Xboxmania' },
   },
   collections: [Posts, Reviews, Pages, Games, Categories, Media, Candidates, Messages, Sources, Users],
-  editor: lexicalEditor(),
+  editor: lexicalEditor({
+    features: ({ defaultFeatures }) => [...defaultFeatures, BlocksFeature({ blocks: [YouTubeBlock] })],
+  }),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({
