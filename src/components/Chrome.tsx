@@ -130,6 +130,10 @@ export function Footer() {
 
 const SLOTS = { lb: process.env.NEXT_PUBLIC_ADSENSE_SLOT_LB, rect: process.env.NEXT_PUBLIC_ADSENSE_SLOT_RECT, inline: process.env.NEXT_PUBLIC_ADSENSE_SLOT_INLINE }
 
+/** Diz se haverá anúncio deste tipo (em produção, só com o ID do bloco configurado). */
+export const hasAd = (kind: 'lb' | 'rect' | 'inline') =>
+  process.env.NODE_ENV !== 'production' || !!(process.env.NEXT_PUBLIC_ADSENSE_CLIENT && SLOTS[kind])
+
 export function AdSlot({ kind }: { kind: 'lb' | 'rect' | 'inline' }) {
   const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT
   if (!client) {
