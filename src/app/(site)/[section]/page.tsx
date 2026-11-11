@@ -3,7 +3,7 @@ import { notFound, permanentRedirect } from 'next/navigation'
 import { Header, Footer } from '../../../components/Chrome'
 import { PageView } from '../../../components/PageView'
 import { NewsItem, ReviewCard, Pager } from '../../../components/Cards'
-import { SECTIONS, isSection, latestPosts, latestReviews, findBySlug, findPage, postPath, reviewPath } from '../../../lib/data'
+import { SECTIONS, isSection, latestPosts, latestReviews, findBySlug, findPage, findEpisodeByLegacy, postPath, reviewPath } from '../../../lib/data'
 
 export const revalidate = 120
 type Props = { params: Promise<{ section: string }>; searchParams: Promise<{ page?: string }> }
@@ -26,7 +26,11 @@ export default async function SectionPage({ params, searchParams }: Props) {
     const pg = await findPage(section)
     if (pg) return <PageView page={pg} />
     const hit = await findBySlug(section)
-    if (!hit) notFound()
+    if (!hit) {
+      const old = await findEpisodeByLegacy(section)
+      if (old) permanentRedirect(`/podcast/${old.slug}`)
+      notFound()
+    }
     permanentRedirect(hit.type === 'post' ? postPath(hit.doc) : reviewPath(hit.doc))
   }
 

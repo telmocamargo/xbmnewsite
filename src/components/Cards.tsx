@@ -1,6 +1,6 @@
 import type React from 'react'
 import Link from 'next/link'
-import { hue, mediaAlt, mediaUrl, fmtDate, fmtScore } from '../lib/data'
+import { hue, mediaAlt, mediaUrl, fmtDate, fmtScore, fmtDuration } from '../lib/data'
 
 export function Cover({ media, title, size = 'card', score, eager }: { media?: unknown; title: string; size?: 'thumb' | 'card' | 'hero'; score?: number | null; eager?: boolean }) {
   const url = mediaUrl(media, size)
@@ -42,7 +42,8 @@ export function ReviewCard({ href, title, platform, score, date, media }: { href
 
 export function Pager({ base, page, pages }: { base: string; page: number; pages: number }) {
   if (pages <= 1) return null
-  const href = (p: number) => (p === 1 ? base : `${base}?page=${p}`)
+  const sep = base.includes('?') ? '&' : '?'
+  const href = (p: number) => (p === 1 ? base : `${base}${sep}page=${p}`)
   return (
     <nav className="pager" aria-label="Paginação">
       {page > 1 ? <Link href={href(page - 1)}>← Anterior</Link> : <span className="off">← Anterior</span>}
@@ -51,5 +52,24 @@ export function Pager({ base, page, pages }: { base: string; page: number; pages
       </span>
       {page < pages ? <Link href={href(page + 1)}>Próxima →</Link> : <span className="off">Próxima →</span>}
     </nav>
+  )
+}
+
+export function EpisodeCard({ ep, big }: { ep: { slug?: string | null; title: string; kind: string; duration?: number | null; publishedAt?: string | null; cover?: unknown }; big?: boolean }) {
+  return (
+    <Link className={`ep-card${big ? ' big' : ''}`} href={`/podcast/${ep.slug}`}>
+      <div className="ep-thumb">
+        <Cover media={ep.cover} title={ep.title} size={big ? 'hero' : 'card'} />
+        <span className="ep-badge">{ep.kind === 'video' ? 'Vídeo' : 'Podcast'}</span>
+        {ep.duration ? <span className="ep-dur">{fmtDuration(ep.duration)}</span> : null}
+        <span className="ep-play" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" /></svg>
+        </span>
+      </div>
+      <div className="ep-title">
+        <b>{ep.title}</b>
+        {ep.publishedAt ? <span className="meta">{fmtDate(ep.publishedAt)}</span> : null}
+      </div>
+    </Link>
   )
 }

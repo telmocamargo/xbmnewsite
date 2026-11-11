@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     posts: Post;
     reviews: Review;
+    episodes: Episode;
     pages: Page;
     games: Game;
     categories: Category;
@@ -87,6 +88,7 @@ export interface Config {
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    episodes: EpisodesSelect<false> | EpisodesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     games: GamesSelect<false> | GamesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
@@ -376,6 +378,41 @@ export interface Review {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Episódios do Gamemania Podcast e vídeos do canal, importados do YouTube. Marque "Destaque" para aparecer em primeiro na home.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "episodes".
+ */
+export interface Episode {
+  id: number;
+  title: string;
+  slug?: string | null;
+  /**
+   * Cole o link ou o código do vídeo.
+   */
+  youtubeId: string;
+  kind: 'podcast' | 'video';
+  featured?: boolean | null;
+  episodeNumber?: number | null;
+  publishedAt?: string | null;
+  duration?: number | null;
+  cover?: (number | null) | Media;
+  description?: string | null;
+  spotifyUrl?: string | null;
+  /**
+   * Endereços do site antigo que redirecionam para este episódio.
+   */
+  legacySlugs?:
+    | {
+        slug: string;
+        id?: string | null;
+      }[]
+    | null;
+  searchText?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Páginas fixas do site: Sobre, Contato, Política de privacidade e outras.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -609,6 +646,10 @@ export interface PayloadLockedDocument {
         value: number | Review;
       } | null)
     | ({
+        relationTo: 'episodes';
+        value: number | Episode;
+      } | null)
+    | ({
         relationTo: 'pages';
         value: number | Page;
       } | null)
@@ -776,6 +817,32 @@ export interface ReviewsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "episodes_select".
+ */
+export interface EpisodesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  youtubeId?: T;
+  kind?: T;
+  featured?: T;
+  episodeNumber?: T;
+  publishedAt?: T;
+  duration?: T;
+  cover?: T;
+  description?: T;
+  spotifyUrl?: T;
+  legacySlugs?:
+    | T
+    | {
+        slug?: T;
+        id?: T;
+      };
+  searchText?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -15,6 +15,7 @@ import { Sources } from './collections/Sources'
 import { Candidates } from './collections/Candidates'
 import { Pages } from './collections/Pages'
 import { Messages } from './collections/Messages'
+import { Episodes } from './collections/Episodes'
 import { migrations } from './migrations'
 import { YouTubeBlock } from './blocks/YouTube'
 
@@ -26,7 +27,7 @@ export default buildConfig({
     importMap: { baseDir: path.resolve(dirname) },
     meta: { titleSuffix: ' · Xboxmania', description: 'Painel do Xboxmania' },
   },
-  collections: [Posts, Reviews, Pages, Games, Categories, Media, Candidates, Messages, Sources, Users],
+  collections: [Posts, Reviews, Episodes, Pages, Games, Categories, Media, Candidates, Messages, Sources, Users],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [...defaultFeatures, BlocksFeature({ blocks: [YouTubeBlock] })],
   }),

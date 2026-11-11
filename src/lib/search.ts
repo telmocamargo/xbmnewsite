@@ -23,7 +23,7 @@ const MAX = 40000
 
 /** Junta título, resumo, autor e corpo do texto em uma única linha normalizada. */
 export function buildSearchText(doc: Record<string, any>): string {
-  const parts = [doc.title, doc.excerpt, doc.dek, doc.authorName, doc.source?.name, doc.platformTested]
+  const parts = [doc.title, doc.excerpt, doc.dek, doc.description, doc.authorName, doc.source?.name, doc.platformTested]
   if (doc.content?.root) parts.push(lexicalText(doc.content.root))
   if (typeof doc.legacyHtml === 'string') parts.push(stripHtml(doc.legacyHtml))
   return normalize(parts.filter((p) => typeof p === 'string').join(' ')).slice(0, MAX)
