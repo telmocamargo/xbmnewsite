@@ -7,6 +7,7 @@
  *   npm run import:youtube -- --run --limit 5    teste: importa só 5 vídeos
  *   npm run import:youtube -- --run              importa tudo (pode ser repetido; pula o que já existe)
  * Opções: --handle gamemaniapodcast   --min-podcast 1200 (segundos para contar como podcast)
+ *         --only-live                 importa só as transmissões ao vivo (o que está na aba "Ao vivo" do canal)
  *         --include-shorts            (por padrão, vídeos de até 60 s são ignorados)
  */
 import { getPayload } from 'payload'
@@ -17,6 +18,7 @@ import { toSlug } from '../src/lib/slug'
 const arg = (n: string) => process.argv.includes(`--${n}`)
 const val = (n: string, d: string) => { const i = process.argv.indexOf(`--${n}`); return i > -1 ? process.argv[i + 1] : d }
 const RUN = arg('run')
+const ONLY_LIVE = arg('only-live')
 const HANDLE = val('handle', 'gamemaniapodcast').replace(/^@/, '')
 const LIMIT = Number(val('limit', '0')) || Infinity
 const MIN_PODCAST = Number(val('min-podcast', '1200'))
@@ -69,24 +71,28 @@ do {
 } while (pageToken)
 
 // 3) detalhes (título, descrição, duração, miniaturas)
-type V = { id: string; title: string; description: string; publishedAt: string; seconds: number; thumb?: string }
+type V = { id: string; title: string; description: string; publishedAt: string; seconds: number; live: boolean; thumb?: string }
 const videos: V[] = []
 for (let i = 0; i < ids.length; i += 50) {
-  const r = await api('/videos', { part: 'snippet,contentDetails', id: ids.slice(i, i + 50).join(',') })
+  const r = await api('/videos', { part: 'snippet,contentDetails,liveStreamingDetails', id: ids.slice(i, i + 50).join(',') })
   for (const v of r.items || []) {
     if (v.snippet.liveBroadcastContent === 'upcoming') continue
     const t = v.snippet.thumbnails || {}
-    videos.push({ id: v.id, title: v.snippet.title, description: v.snippet.description || '', publishedAt: v.snippet.publishedAt, seconds: seconds(v.contentDetails.duration), thumb: (t.maxres || t.standard || t.high || t.medium || t.default)?.url })
+    videos.push({ id: v.id, title: v.snippet.title, description: v.snippet.description || '', publishedAt: v.snippet.publishedAt, seconds: seconds(v.contentDetails.duration), live: !!v.liveStreamingDetails?.actualStartTime, thumb: (t.maxres || t.standard || t.high || t.medium || t.default)?.url })
   }
 }
 videos.sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
 
 const shorts = videos.filter((v) => v.seconds <= 60)
-const keep = arg('include-shorts') ? videos : videos.filter((v) => v.seconds > 60)
-const pods = keep.filter((v) => v.seconds >= MIN_PODCAST)
+const lives = videos.filter((v) => v.live)
+const base = ONLY_LIVE ? lives : videos
+const keep = arg('include-shorts') ? base : base.filter((v) => v.seconds > 60)
 console.log(`Vídeos no canal:        ${videos.length}`)
-console.log(`Podcasts (≥ ${Math.round(MIN_PODCAST / 60)} min):   ${pods.length}`)
-console.log(`Vídeos (mais curtos):   ${keep.length - pods.length}`)
+console.log(`Transmissões ao vivo:   ${lives.length}  (aba "Ao vivo")${ONLY_LIVE ? '  <- só estas serão importadas' : ''}`)
+const asPodcast = (v: V) => (ONLY_LIVE && v.live) || v.seconds >= MIN_PODCAST
+console.log(`A importar:             ${keep.length}`)
+console.log(`  como Podcast:         ${keep.filter(asPodcast).length}`)
+console.log(`  como Vídeo:           ${keep.filter((v) => !asPodcast(v)).length}`)
 console.log(`Shorts ignorados:       ${arg('include-shorts') ? 0 : shorts.length}`)
 console.log(`Mais recente: ${keep[0]?.publishedAt?.slice(0, 10)} · mais antigo: ${keep[keep.length - 1]?.publishedAt?.slice(0, 10)}`)
 
@@ -112,7 +118,7 @@ for (const v of keep.slice(0, LIMIT)) {
       overrideAccess: true,
       data: {
         title: v.title, slug, youtubeId: v.id,
-        kind: v.seconds >= MIN_PODCAST ? 'podcast' : 'video',
+        kind: asPodcast(v) ? 'podcast' : 'video',
         episodeNumber: episodeNumber(v.title),
         publishedAt: v.publishedAt, duration: v.seconds,
         description: v.description.slice(0, 8000),

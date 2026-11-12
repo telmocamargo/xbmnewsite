@@ -7,7 +7,7 @@ Site de notícias, análises e artigos sobre o ecossistema Xbox. Feito com **Pay
 - **Painel** em `/admin`: posts, análises (com nota, prós e contras), jogos, categorias, mídia, usuários e papéis. Rascunho, autosave, agendamento e histórico de versões.
 - **Site**: home, listas por seção, páginas de notícia, artigo e análise, SEO (dados estruturados, sitemap, RSS, robots), tema claro/escuro e menu com submenus.
 - **Vídeos do YouTube** nos textos: cole um link do YouTube sozinho em um parágrafo, ou use o bloco "Vídeo do YouTube" (botão + do editor). O vídeo só carrega depois do clique no play, usando o domínio sem cookies.
-- **Podcast e vídeos:** coleção importada do canal do YouTube (`npm run import:youtube`), com bloco na home, página `/podcast` e uma página para cada episódio. Os endereços antigos do WordPress redirecionam (`npm run link:podcast`).
+- **Podcast e vídeos:** coleção importada do canal do YouTube (`npm run import:youtube -- --only-live`), com bloco na home, página `/podcast` e uma página para cada episódio. Os endereços antigos do WordPress redirecionam (`npm run link:podcast`).
 - **Busca** no topo do site (atalho `/`): procura em análises, notícias e artigos e ignora acentos. Depois de migrar conteúdo, rode `npm run reindex`.
 - **Páginas fixas** editáveis no painel (Sobre, Contato, Política de privacidade), formulário de contato que grava no painel e avisa no Telegram, e aviso de cookies. Estatísticas e anúncios só carregam depois do aceite.
 - **Pré-feed de notícias**: varredura de feeds RSS, filtro por relevância, agrupamento de duplicados, resumo curto em português, aviso no Telegram e aprovação com um toque.
