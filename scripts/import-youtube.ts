@@ -8,6 +8,9 @@
  *   npm run import:youtube -- --run              importa tudo (pode ser repetido; pula o que já existe)
  * Opções: --handle gamemaniapodcast   --min-podcast 1200 (segundos para contar como podcast)
  *         --only-live                 importa só as transmissões ao vivo (o que está na aba "Ao vivo" do canal)
+ *         --min-seconds 1200          ignora vídeos mais curtos que isso (1200 = 20 minutos)
+ *         --exclude-title REPRISE     ignora títulos que contenham o texto (vários: separe com vírgula)
+ *         --list                      mostra todos os vídeos que serão importados
  *         --include-shorts            (por padrão, vídeos de até 60 s são ignorados)
  */
 import { getPayload } from 'payload'
@@ -19,6 +22,11 @@ const arg = (n: string) => process.argv.includes(`--${n}`)
 const val = (n: string, d: string) => { const i = process.argv.indexOf(`--${n}`); return i > -1 ? process.argv[i + 1] : d }
 const RUN = arg('run')
 const ONLY_LIVE = arg('only-live')
+const MIN_SECONDS = Number(val('min-seconds', '0')) || 0
+const norm = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+const EXCLUDE = val('exclude-title', '').split(',').map((t) => norm(t.trim())).filter(Boolean)
+/** Tira as hashtags do fim do título ("... #Nostalgia #Videogames"). */
+const cleanTitle = (t: string) => t.replace(/(\s+#[\p{L}\p{N}_]+)+\s*$/u, '').trim() || t
 const HANDLE = val('handle', 'gamemaniapodcast').replace(/^@/, '')
 const LIMIT = Number(val('limit', '0')) || Infinity
 const MIN_PODCAST = Number(val('min-podcast', '1200'))
@@ -83,22 +91,30 @@ for (let i = 0; i < ids.length; i += 50) {
 }
 videos.sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
 
-const shorts = videos.filter((v) => v.seconds <= 60)
 const lives = videos.filter((v) => v.live)
 const base = ONLY_LIVE ? lives : videos
-const keep = arg('include-shorts') ? base : base.filter((v) => v.seconds > 60)
+const byDuration = (v: V) => v.seconds > 60 && v.seconds >= MIN_SECONDS
+const byTitle = (v: V) => EXCLUDE.some((x) => norm(v.title).includes(x))
+const droppedShort = base.filter((v) => !arg('include-shorts') && !byDuration(v))
+const droppedTitle = base.filter((v) => byDuration(v) && byTitle(v))
+const keep = base.filter((v) => (arg('include-shorts') || byDuration(v)) && !byTitle(v))
 console.log(`Vídeos no canal:        ${videos.length}`)
 console.log(`Transmissões ao vivo:   ${lives.length}  (aba "Ao vivo")${ONLY_LIVE ? '  <- só estas serão importadas' : ''}`)
 const asPodcast = (v: V) => (ONLY_LIVE && v.live) || v.seconds >= MIN_PODCAST
 console.log(`A importar:             ${keep.length}`)
 console.log(`  como Podcast:         ${keep.filter(asPodcast).length}`)
 console.log(`  como Vídeo:           ${keep.filter((v) => !asPodcast(v)).length}`)
-console.log(`Shorts ignorados:       ${arg('include-shorts') ? 0 : shorts.length}`)
+console.log(`Ignorados por duração:  ${droppedShort.length}${MIN_SECONDS ? `  (menos de ${Math.round(MIN_SECONDS / 60)} min)` : '  (Shorts de até 60 s)'}`)
+console.log(`Ignorados pelo título:  ${droppedTitle.length}${EXCLUDE.length ? `  (contêm: ${EXCLUDE.join(', ')})` : ''}`)
 console.log(`Mais recente: ${keep[0]?.publishedAt?.slice(0, 10)} · mais antigo: ${keep[keep.length - 1]?.publishedAt?.slice(0, 10)}`)
 
 if (!RUN) {
+  if (droppedTitle.length) {
+    console.log('\nIgnorados pelo título:')
+    for (const v of droppedTitle.slice(0, 30)) console.log(`  ${v.publishedAt.slice(0, 10)}  ${Math.round(v.seconds / 60)} min  ${cleanTitle(v.title)}`)
+  }
   console.log('\nExemplos:')
-  for (const v of keep.slice(0, 5)) console.log(`  ${v.publishedAt.slice(0, 10)}  ${Math.round(v.seconds / 60)} min  ${v.title}`)
+  for (const v of arg('list') ? keep : keep.slice(0, 5)) console.log(`  ${v.publishedAt.slice(0, 10)}  ${Math.round(v.seconds / 60)} min  ${cleanTitle(v.title)}`)
   console.log('\nModo de consulta (nada foi gravado). Use --run para importar.')
   process.exit(0)
 }
@@ -109,15 +125,16 @@ for (const v of keep.slice(0, LIMIT)) {
   try {
     const exists = await payload.find({ collection: 'episodes', where: { youtubeId: { equals: v.id } }, limit: 1, depth: 0 })
     if (exists.totalDocs) { skipped++; continue }
-    let slug = toSlug(v.title) || v.id
+    const title = cleanTitle(v.title)
+    let slug = toSlug(title) || v.id
     const clash = await payload.find({ collection: 'episodes', where: { slug: { equals: slug } }, limit: 1, depth: 0 })
     if (clash.totalDocs) slug = `${slug}-${v.id.slice(0, 4).toLowerCase()}`
-    const cover = v.thumb ? await downloadMedia(payload, v.thumb, v.title, 'Gamemania Podcast', 'own') : null
+    const cover = v.thumb ? await downloadMedia(payload, v.thumb, title, 'Gamemania Podcast', 'own') : null
     await payload.create({
       collection: 'episodes',
       overrideAccess: true,
       data: {
-        title: v.title, slug, youtubeId: v.id,
+        title, slug, youtubeId: v.id,
         kind: asPodcast(v) ? 'podcast' : 'video',
         episodeNumber: episodeNumber(v.title),
         publishedAt: v.publishedAt, duration: v.seconds,
@@ -126,7 +143,7 @@ for (const v of keep.slice(0, LIMIT)) {
       },
     })
     created++
-    console.log(`  ok  ${v.publishedAt.slice(0, 10)}  ${v.title}`)
+    console.log(`  ok  ${v.publishedAt.slice(0, 10)}  ${title}`)
   } catch (e) {
     failed++
     console.error(`  ERRO ${v.title}: ${e instanceof Error ? e.message : e}`)
