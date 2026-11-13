@@ -183,6 +183,10 @@ export interface Post {
   game?: (number | null) | Game;
   author?: (number | null) | User;
   authorName?: string | null;
+  /**
+   * Mostra a linha de transparência no fim do texto.
+   */
+  aiAssisted?: boolean | null;
   featured?: boolean | null;
   publishedAt?: string | null;
   source?: {
@@ -452,11 +456,32 @@ export interface Page {
  */
 export interface Candidate {
   id: number;
-  status: 'pending' | 'approved' | 'scheduled' | 'published' | 'discarded';
+  status:
+    'pending' | 'awaiting_opinion' | 'drafting' | 'draft_ready' | 'approved' | 'scheduled' | 'published' | 'discarded';
   scheduledFor?: string | null;
   title: string;
   summary?: string | null;
   comment?: string | null;
+  /**
+   * Enviada pelo Telegram, ou escreva aqui. É a única fonte de opinião do texto.
+   */
+  opinion?: string | null;
+  draftTitle?: string | null;
+  /**
+   * Parágrafos separados por uma linha em branco. Aceita **negrito** e [texto](link). Ao aprovar, este texto vira a notícia.
+   */
+  draftBody?: string | null;
+  draftChecks?:
+    | {
+        ok?: boolean | null;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  draftAt?: string | null;
+  opinionAt?: string | null;
+  promptMessageId?: string | null;
+  sourceText?: string | null;
   originalTitle?: string | null;
   sourceName?: string | null;
   source?: (number | null) | Source;
@@ -745,6 +770,7 @@ export interface PostsSelect<T extends boolean = true> {
   game?: T;
   author?: T;
   authorName?: T;
+  aiAssisted?: T;
   featured?: T;
   publishedAt?: T;
   source?:
@@ -950,6 +976,20 @@ export interface CandidatesSelect<T extends boolean = true> {
   title?: T;
   summary?: T;
   comment?: T;
+  opinion?: T;
+  draftTitle?: T;
+  draftBody?: T;
+  draftChecks?:
+    | T
+    | {
+        ok?: T;
+        text?: T;
+        id?: T;
+      };
+  draftAt?: T;
+  opinionAt?: T;
+  promptMessageId?: T;
+  sourceText?: T;
   originalTitle?: T;
   sourceName?: T;
   source?: T;

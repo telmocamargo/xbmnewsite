@@ -90,6 +90,7 @@ export async function runIngest(opts: { notify?: boolean } = {}): Promise<Ingest
             ...base,
             title: s.title,
             summary: s.summary,
+            sourceText: text.slice(0, 8000),
             imageUrl: imageOf(it) ?? undefined,
             relevance: score,
             isRumor: rumor,

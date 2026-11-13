@@ -118,6 +118,17 @@ Com `--only-live`, só entram as transmissões ao vivo (o que está na aba **Ao 
    - Todo dia às 08:00 de Brasília (11:00 UTC, confira o fuso do servidor): `curl -fsS -X POST -H "x-cron-secret: $CRON_SECRET" http://localhost:3000/api/cron/digest`
 4. ☐ **Testar:** rode a primeira chamada à mão e veja chegarem notícias em Pré-feed e um aviso no Telegram. Toque em Aprovar no celular e confira se a notícia foi publicada.
 
+## I2. Notícia com a sua opinião (rascunho assistido por IA)
+
+1. ☐ No Coolify, adicione a variável `ANTHROPIC_API_KEY` (chave da API da Anthropic, criada em console.anthropic.com) e faça um deploy. Sem a chave, o botão **Escrever com a minha opinião** não aparece e o pré-feed continua como antes.
+2. ☐ Variáveis opcionais: `NEWS_OPINION_DAILY_LIMIT` (padrão 4), `AI_DISCLOSURE` (a linha de transparência no fim do texto), `WRITER_MODEL` (padrão `claude-opus-5-5`) e `SUMMARY_MODEL` (padrão `claude-haiku-5-5`, usado nos resumos em massa).
+3. ☐ O webhook do Telegram do passo I serve para tudo: botões e respostas de texto.
+4. ☐ **Como usar:** na notícia que chegar ao Telegram, toque em **Escrever com a minha opinião**, responda à mensagem do bot com uma ou duas frases (o microfone do teclado do celular escreve por você) e revise o rascunho. **Publicar**, **Agendar** (amanhã, 09:00), **Editar** (abre o painel), **Refazer** ou **Descartar**. Envie `/cancelar` para desistir.
+5. ☐ O texto sai com a linha "Texto produzido com apoio de IA e revisado por…" e sempre com crédito e link da fonte.
+6. ☐ **Ajustar o tom:** o guia de estilo está em `src/content/style-guide.ts`. Se os primeiros rascunhos não soarem como você, anote o que mudaria e ajustamos o guia.
+
+Custo (estimativa a partir dos preços de tabela, confira os valores atuais na Anthropic): cerca de US$ 0,03 a 0,05 por rascunho com o modelo padrão do redator, o que dá poucos dólares por mês no limite de 4 por dia. Os resumos em massa usam um modelo bem mais barato.
+
 ## J. A virada (o único momento com risco)
 
 Faça em um horário de pouco acesso.

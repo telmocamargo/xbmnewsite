@@ -515,3 +515,7 @@ table.q tr:last-child td{border-bottom:0}
   .pod-mini{grid-template-columns:128px minmax(0,1fr)}
   .pod-head h2{font-size:26px}
 }
+
+/* ===== Linha de transparência (texto com apoio de IA) ===== */
+.ai-note{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;margin-top:22px}
+.prose a.btn,.prose a.btn:hover{color:var(--accent-ink);text-decoration:none}

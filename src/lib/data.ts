@@ -19,6 +19,8 @@ export const postPath = (p: Pick<Post, 'slug' | 'kind'>) =>
   `/${p.kind === 'noticia' ? 'noticias' : p.kind === 'podcast' ? 'podcast' : 'artigos'}/${p.slug}`
 export const reviewPath = (r: Pick<Review, 'slug'>) => `/analises/${r.slug}`
 export const episodePath = (e: Pick<Episode, 'slug'>) => `/podcast/${e.slug}`
+/** Linha de transparência das notícias escritas com apoio de IA. */
+export const AI_NOTE = () => process.env.AI_DISCLOSURE || 'Texto produzido com apoio de IA e revisado por Telmo Camargo.'
 export const CHANNEL_URL = 'https://www.youtube.com/@gamemaniapodcast'
 
 export function fmtDuration(sec?: number | null) {

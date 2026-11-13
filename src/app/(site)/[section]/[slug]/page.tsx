@@ -4,7 +4,7 @@ import { notFound, permanentRedirect } from 'next/navigation'
 import { Header, Footer, AdSlot, hasAd } from '../../../../components/Chrome'
 import { Cover, NewsItem } from '../../../../components/Cards'
 import { Body } from '../../../../components/Body'
-import { SECTIONS, SITE, isSection, findBySlug, latestPosts, postPath, reviewPath, mediaUrl, fmtDate, fmtScore, scoreLabel, authorOf } from '../../../../lib/data'
+import { SECTIONS, SITE, AI_NOTE, isSection, findBySlug, latestPosts, postPath, reviewPath, mediaUrl, fmtDate, fmtScore, scoreLabel, authorOf } from '../../../../lib/data'
 
 export const revalidate = 300
 type Props = { params: Promise<{ section: string; slug: string }> }
@@ -65,6 +65,7 @@ export default async function Detail({ params }: Props) {
   const s = d.subscores || {}
   const bars: [string, number | null | undefined][] = [['Jogabilidade', s.gameplay], ['Visual', s.visual], ['Som', s.sound], ['Desempenho', s.performance]]
 
+  const hasText = !!d.content?.root?.children?.length
   const showSide = hit.type === 'review' || hasAd('rect')
 
   return (
@@ -100,17 +101,20 @@ export default async function Detail({ params }: Props) {
 
           <article className="prose d-article">
             {img ? <Cover media={d.heroImage} title={d.title} size="hero" eager /> : null}
-            {hit.type === 'post' && d.source?.url ? (
+            {hit.type === 'post' && d.source?.url && !hasText ? (
               <>
                 <p className="lead">{d.excerpt}</p>
                 {d.source.comment ? <div className="note-box"><b>Nossa nota:</b> {d.source.comment}</div> : null}
-                <div className="src-box">
-                  <span>Fonte: <b>{d.source.name || 'veja o original'}</b></span>
-                  <a className="btn" href={d.source.url} rel="nofollow noopener" target="_blank">Ler na fonte original</a>
-                </div>
               </>
             ) : null}
             <Body content={d.content} legacyHtml={d.legacyHtml} />
+            {hit.type === 'post' && d.source?.url ? (
+              <div className="src-box">
+                <span>Fonte: <b>{d.source.name || 'veja o original'}</b></span>
+                <a className="btn" href={d.source.url} rel="nofollow noopener" target="_blank">Ler na fonte original</a>
+              </div>
+            ) : null}
+            {d.aiAssisted ? <p className="ai-note">{AI_NOTE()}</p> : null}
             <AdSlot kind="inline" />
           </article>
 
