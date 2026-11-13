@@ -1,5 +1,6 @@
 import type { Payload, PayloadRequest } from 'payload'
 import { toSlug } from './slug'
+import { lexical } from './lexical'
 
 const MAX_IMAGE = 8 * 1024 * 1024
 
@@ -51,19 +52,21 @@ export async function promoteCandidate(payload: Payload, id: number | string, re
     if (m) heroImage = Number(m)
   }
 
+  const hasDraft = !!c.draftBody?.trim()
   const post = await payload.create({
     collection: 'posts',
     draft: !publishNow,
     overrideAccess: true,
     data: {
-      title: c.title,
-      slug: await uniqueSlug(payload, c.title, req),
+      title: hasDraft ? c.draftTitle || c.title : c.title,
+      slug: await uniqueSlug(payload, hasDraft ? c.draftTitle || c.title : c.title, req),
       kind: 'noticia',
       excerpt: c.summary || undefined,
+      ...(hasDraft ? { content: lexical(c.draftBody!.split(/\n{2,}/).map((t) => t.trim()).filter(Boolean).map((t) => ['p', t] as ['p', string])), aiAssisted: true } : {}),
       heroImage: heroImage ?? undefined,
       category: typeof c.category === 'object' && c.category ? c.category.id : (c.category as number | null | undefined) ?? undefined,
       publishedAt: when,
-      source: { name: c.sourceName || '', url: c.url, comment: c.comment || '', rumor: !!c.isRumor },
+      source: { name: c.sourceName || '', url: c.url, comment: hasDraft ? '' : c.comment || '', rumor: !!c.isRumor },
       _status: publishNow ? 'published' : 'draft',
     },
     req,

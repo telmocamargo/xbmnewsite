@@ -50,6 +50,7 @@ export const Posts: CollectionConfig = {
     { name: 'game', label: 'Jogo relacionado', type: 'relationship', relationTo: 'games', admin: { position: 'sidebar' } },
     { name: 'author', label: 'Autor', type: 'relationship', relationTo: 'users', admin: { position: 'sidebar' } },
     { name: 'authorName', label: 'Nome do autor (importado)', type: 'text', admin: { position: 'sidebar' } },
+    { name: 'aiAssisted', label: 'Texto com apoio de IA', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar', description: 'Mostra a linha de transparência no fim do texto.' } },
     { name: 'featured', label: 'Destaque na home', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar' } },
     { name: 'publishedAt', label: 'Data de publicação', type: 'date', admin: { position: 'sidebar', date: { pickerAppearance: 'dayAndTime' } } },
     {
