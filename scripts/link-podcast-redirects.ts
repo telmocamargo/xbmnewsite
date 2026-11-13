@@ -17,7 +17,8 @@ const ORIGIN = val('origin', 'https://xboxmania.com.br').replace(/\/$/, '')
 const RUN = arg('run')
 
 const decode = (s: string) => s.replace(/&#8211;|&#8212;/g, '-').replace(/&#8217;|&#039;/g, "'").replace(/&#038;|&amp;/g, '&').replace(/<[^>]+>/g, '')
-const num = (t: string) => { const m = /(?:\bEP\.?\s*|Epis[oó]dio\s*|#\s*)(\d{1,3})\b/i.exec(t); return m ? Number(m[1]) : undefined }
+// reconhece "EP 69", "Episódio 113", "#76" e o formato antigo "GAMEMANIA – 70 – título"
+const num = (t: string) => { const m = /(?:\bEP\.?\s*|Epis[oó]dio\s*|#\s*|\bGame\s?mania\s*[-–]\s*)(\d{1,3})\b/i.exec(t); return m ? Number(m[1]) : undefined }
 const clean = (t: string) => titleTokens(t.replace(/gamemania( podcast| pocket)?/gi, ' '))
 
 const old: { slug: string; title: string }[] = []

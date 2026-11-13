@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 import { Header, Footer } from '../../../components/Chrome'
 import { PageView } from '../../../components/PageView'
+import { LEGACY_PODCAST_FALLBACK } from '../../../content/legacy-podcast'
 import { NewsItem, ReviewCard, Pager } from '../../../components/Cards'
 import { SECTIONS, isSection, latestPosts, latestReviews, findBySlug, findPage, findEpisodeByLegacy, postPath, reviewPath } from '../../../lib/data'
 
@@ -29,6 +30,7 @@ export default async function SectionPage({ params, searchParams }: Props) {
     if (!hit) {
       const old = await findEpisodeByLegacy(section)
       if (old) permanentRedirect(`/podcast/${old.slug}`)
+      if (LEGACY_PODCAST_FALLBACK.includes(section)) permanentRedirect('/podcast')
       notFound()
     }
     permanentRedirect(hit.type === 'post' ? postPath(hit.doc) : reviewPath(hit.doc))
