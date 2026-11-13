@@ -88,13 +88,13 @@ No mesmo terminal da aplicação:
 
 1. ☐ **Criar a chave da API do YouTube** (gratuita): no Google Cloud Console, crie um projeto, ative a **YouTube Data API v3** e crie uma **chave de API**. Restrinja a chave a essa API (e, se quiser, ao IP do servidor). Guarde a chave com cuidado.
 2. ☐ No Coolify, adicione a variável `YOUTUBE_API_KEY` com essa chave e faça um deploy (ou use `export YOUTUBE_API_KEY=...` só na sessão do terminal).
-3. ☐ **Consultar** o que será importado (nada é gravado): `npx tsx scripts/import-youtube.ts --only-live`
-4. ☐ **Teste pequeno:** `npx tsx scripts/import-youtube.ts --only-live --run --limit 5`
-5. ☐ **Importar tudo:** `npx tsx scripts/import-youtube.ts --only-live --run` (pode ser repetido, pula o que já existe)
+3. ☐ **Consultar** o que será importado (nada é gravado): `npx tsx scripts/import-youtube.ts --only-live --min-seconds 1200 --exclude-title REPRISE`
+4. ☐ **Teste pequeno:** `npx tsx scripts/import-youtube.ts --only-live --min-seconds 1200 --exclude-title REPRISE --run --limit 5`
+5. ☐ **Importar tudo:** `npx tsx scripts/import-youtube.ts --only-live --min-seconds 1200 --exclude-title REPRISE --run` (pode ser repetido, pula o que já existe)
 6. ☐ **Ligar os endereços antigos do podcast** aos novos episódios: `npx tsx scripts/link-podcast-redirects.ts` (consulta) e depois com `--run`. Rode **antes** da virada do domínio, porque ele lê o site antigo.
 7. ☐ No painel, em **Podcast e vídeos**, marque **Destaque na home** em dois episódios.
 
-Com `--only-live`, só entram as transmissões ao vivo (o que está na aba **Ao vivo** do canal), todas como **Podcast**. Sem essa opção, vídeos de até 60 s (Shorts) são ignorados, episódios com 20 minutos ou mais entram como **Podcast** e os mais curtos como **Vídeo**. O tipo pode ser ajustado episódio a episódio no painel.
+Com `--only-live`, só entram as transmissões ao vivo (o que está na aba **Ao vivo** do canal), todas como **Podcast**. `--min-seconds 1200` ignora as de menos de 20 minutos, `--exclude-title REPRISE` ignora as reprises, e `--list` mostra todos os vídeos que serão importados. As hashtags do fim dos títulos são removidas. Sem essa opção, vídeos de até 60 s (Shorts) são ignorados, episódios com 20 minutos ou mais entram como **Podcast** e os mais curtos como **Vídeo**. O tipo pode ser ajustado episódio a episódio no painel.
 
 ## H. Conferir antes da virada
 
